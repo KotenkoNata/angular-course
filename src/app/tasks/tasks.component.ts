@@ -4,6 +4,8 @@ import { NewTaskComponent } from "./new-task/new-task.component";
 
 import { type NewTaskData } from "./task/task.model";
 
+import { TasksService } from "./tasks.service";
+
 @Component({
   selector: 'app-tasks',
   standalone: true,
@@ -19,12 +21,14 @@ export class TasksComponent {
   @Input({required: true}) userId!: string;
   isAddingTask:boolean = false;
 
+  constructor(private tasksService:TasksService){}
+
   get selectedUserTasks(){
-    return
-  }
+    return this.tasksService.getUserTasks(this.userId);
+   }
 
  onCompleteTask(id: string) {
-  this.tasks = this.tasks.filter(task => task.id !== id);
+
  }
 
  onStartAddTask(){
