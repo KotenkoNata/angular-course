@@ -1,4 +1,13 @@
-import { Component, ViewEncapsulation, input, inject, ElementRef, contentChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  ViewEncapsulation,
+  input,
+  inject,
+  ElementRef,
+  contentChild,
+  AfterViewInit,
+  afterRender, afterNextRender
+} from '@angular/core';
 
 @Component({
   selector: 'app-control',
@@ -23,8 +32,18 @@ export class ControlComponent implements AfterViewInit{
 
   private control = contentChild<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('input');
 
+  constructor() {
+    afterRender(()=>{
+      console.log('AFTER RENDER')
+    });
+
+    afterNextRender(()=>{
+      console.log('AFTER NEXT RENDER')
+    });
+  }
+
   ngAfterViewInit() {
-    console.log('AFTER VIEW INIT')
+
   }
 
   onClick(){
