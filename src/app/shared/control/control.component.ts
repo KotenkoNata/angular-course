@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation, input, inject, ElementRef, contentChild } from '@angular/core';
+import { Component, ViewEncapsulation, input, inject, ElementRef, contentChild, AfterViewInit } from '@angular/core';
 
 @Component({
   selector: 'app-control',
@@ -12,7 +12,7 @@ import { Component, ViewEncapsulation, input, inject, ElementRef, contentChild }
     '(click)': 'onClick()'
   }
 })
-export class ControlComponent {
+export class ControlComponent implements AfterViewInit{
   // @HostListener('click') onClick(){
   //   console.log('click');
   // }
@@ -22,6 +22,10 @@ export class ControlComponent {
   // @ContentChild('input') private control?: ElementRef<HTMLInputElement | HTMLTextAreaElement>;
 
   private control = contentChild<ElementRef<HTMLInputElement | HTMLTextAreaElement>>('input');
+
+  ngAfterViewInit() {
+    console.log('AFTER VIEW INIT')
+  }
 
   onClick(){
     console.log('click');
