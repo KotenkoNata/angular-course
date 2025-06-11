@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 
 import { interval } from 'rxjs';
 
@@ -8,12 +8,18 @@ import { interval } from 'rxjs';
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
+  private destroyRef = inject(DestroyRef);
 
   ngOnInit():void {
-    interval(1000).subscribe({
+    const subscription = interval(1000).subscribe({
       next: (value) => {
         console.log(`Interval tick: ${value}`);
       }
     });
+
+    this.destroyRef.onDestroy(() => { 
+      console.log('Destroying subscription');
+      subscription.unsubscribe();
+     })
   }
 }
