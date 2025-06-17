@@ -2,6 +2,8 @@ import { Component, computed, DestroyRef, effect, inject, OnInit, signal } from 
 
 import { interval, map } from 'rxjs';
 
+import { toObservable } from "@angular/core/rxjs-interop";
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -10,21 +12,22 @@ import { interval, map } from 'rxjs';
 export class AppComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   clickCount = signal(0);
-  interval = signal(0);
-  doubleInterval = computed(() => { 
-    this.interval() * 2;
-   })
+  clickCount$ = toObservable(this.clickCount);
+  // interval = signal(0);
+  // doubleInterval = computed(() => { 
+  //   this.interval() * 2;
+  //  })
 
   constructor() {
-    effect(() => { 
-      console.log(`Click count: ${this.clickCount()}`);
-    })
+    // effect(() => { 
+    //   console.log(`Click count: ${this.clickCount()}`);
+    // })
   }
 
   ngOnInit(): void {
-    setInterval(() => { 
-      this.interval.update(value => value + 1);
-    },1000)
+    // setInterval(() => { 
+    //   this.interval.update(value => value + 1);
+    // },1000)
     // const subscription = interval(1000).pipe(
     //   map((val) => val*2)
     // ).subscribe({
@@ -33,9 +36,18 @@ export class AppComponent implements OnInit {
     //   }
     // });
 
-    // this.destroyRef.onDestroy(() => { 
+    // this.destroyRef.onDestroy(() => {
     //   subscription.unsubscribe();
     //  })
+    const subscription = this.clickCount$.subscribe({
+      next: (value) => {
+        console.log(`Click count observable: ${this.clickCount()}`);
+      }
+    });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
   }
 
   onClick(): void { 
