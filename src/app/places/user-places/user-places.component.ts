@@ -7,38 +7,33 @@ import { Place } from "../place.model";
 import { PlacesService } from "../places.service";
 
 @Component({
-  selector: 'app-user-places',
+  selector: "app-user-places",
   standalone: true,
-  templateUrl: './user-places.component.html',
-  styleUrl: './user-places.component.css',
+  templateUrl: "./user-places.component.html",
+  styleUrl: "./user-places.component.css",
   imports: [PlacesContainerComponent, PlacesComponent],
 })
 export class UserPlacesComponent implements OnInit {
-  places = signal<Place[] | undefined>(undefined);
   isFetching = signal<boolean>(false);
-  error = signal('');
-  
+  error = signal("");
+
   private destroyRef = inject(DestroyRef);
   private placesService = inject(PlacesService);
+  places = this.placesService.loadedUserPlaces;
 
-  ngOnInit() { 
-      this.isFetching.set(true);
-    const subscription = 
-        this.placesService.loadUserPlaces()
-        .subscribe({
-          next: (places) => {
-            this.places.set(places);
-          },
-          error: (error: Error) => {
-            this.error.set(error.message);
-          },
-          complete: () => {
-            this.isFetching.set(false);
-          }
-        });
-  
-      this.destroyRef.onDestroy(() => { 
-        subscription.unsubscribe();
-      })
-    }
+  ngOnInit() {
+    this.isFetching.set(true);
+    const subscription = this.placesService.loadUserPlaces().subscribe({
+      error: (error: Error) => {
+        this.error.set(error.message);
+      },
+      complete: () => {
+        this.isFetching.set(false);
+      },
+    });
+
+    this.destroyRef.onDestroy(() => {
+      subscription.unsubscribe();
+    });
+  }
 }
