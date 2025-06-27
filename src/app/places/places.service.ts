@@ -1,5 +1,6 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { HttpClient } from "@angular/common/http";
+import { ErrorService } from '../shared/error.service';
 
 import { catchError, map, tap, throwError } from "rxjs";
 
@@ -9,6 +10,7 @@ import { Place } from './place.model';
   providedIn: 'root',
 })
 export class PlacesService {
+  private errorService = inject(ErrorService);
   private userPlaces = signal<Place[]>([]);
   private httpClient = inject(HttpClient);
 
@@ -41,6 +43,7 @@ export class PlacesService {
     }).pipe(
       catchError((error) => { 
         this.userPlaces.set(prevPlaces);
+        this.errorService.showError("Failed to add place to your places. Please try again later.");
         return throwError(() => new Error("Failed to add place to your places. Please try again later."));
       })
     );
